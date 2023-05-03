@@ -10,7 +10,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-//mongoose db locally
+//mongoose db 
 mongoose.connect("mongodb+srv://alvinbryan78:test123@cluster0.lnlrf4e.mongodb.net/?retryWrites=true&w=majority");
 
 //INITIALIZE ITEM
@@ -31,15 +31,7 @@ const item3 = new Item({
 })
 
 const defaultItems = [item1, item2, item3];
-/*
-Item.insertMany(defaultItems)
-      .then(function () {
-        console.log("Successfully saved items to DB");
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-*/
+
 
 //for custom lists
 const listSchema = {
@@ -54,14 +46,8 @@ app.get("/", function(req, res) {
         then(items => {
           if(items.length === 0){
 
-            Item.insertMany(defaultItems)
-                  .then(function () {
-                    console.log("Successfully saved items to DB");
-                  })
-                  .catch(function (err) {
-                    console.log(err);
-                  });
-            res.redirect("/");
+            
+            res.render("list", {listTitle: "Today", newListItems: items})
           }else{
             res.render("list", {listTitle: "Today", newListItems: items})
           }
@@ -84,6 +70,14 @@ app.get("/:customListName", function(req,res){
         items: defaultItems
       })
       list.save();
+      Item.insertMany(defaultItems)
+                  .then(function () {
+                    console.log("Successfully saved items to DB");
+                  })
+                  .catch(function (err) {
+                    console.log(err);
+                  });
+
       res.render("list", {listTitle: listName, newListItems: list.items})
     }else{
       //if already exist, load the said list
@@ -131,9 +125,12 @@ app.post("/delete", function(req, res){
   const listName = req.body.listName;
   const itemId = req.body.checkBox;
   if(listName === 'Today'){
-    Item.findByIdAndRemove(itemId).then(function(){
+    Item.findByIdAndRemove(itemId).then(foundList => {
       console.log("Data deleted"); // Success
       res.redirect('/');
+      
+      
+      
     }).catch(function(error){
         console.log(error); // Failure
     });
