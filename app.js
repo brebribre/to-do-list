@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 //mongoose db locally
-mongoose.connect("mongodb://localhost:27017/todolistDB");
+mongoose.connect("mongodb+srv://alvinbryan78:test123@cluster0.lnlrf4e.mongodb.net/?retryWrites=true&w=majority");
 
 //INITIALIZE ITEM
 const itemsSchema = new mongoose.Schema({
